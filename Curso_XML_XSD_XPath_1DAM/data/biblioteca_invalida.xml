@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<biblioteca version="1.0"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="biblioteca.xsd">
+  <libros>
+    <libro id="L1">
+      <titulo>El bosque azul</titulo>
+      <autor>Ana Ruiz</autor>
+      <anio>2018</anio>
+      <genero>Fantasia</genero>
+      <paginas>220</paginas>
+      <precio moneda="EUR">12.95</precio>
+      <disponible>QUIZAS</disponible>
+    </libro>
+  </libros>
+
+  <socios>
+    <socio id="S1">
+      <nombre>Ana Ruiz</nombre>
+      <email>ana.ruiz@example.com</email>
+      <ciudad>Madrid</ciudad>
+    </socio>
+  </socios>
+
+  <prestamos>
+    <prestamo id="P1">
+      <socioRef>S999</socioRef>
+      <libroRef>L999</libroRef>
+      <fechaPrestamo>2026-02-10</fechaPrestamo>
+      <estado>ABIERTO</estado>
+    </prestamo>
+  </prestamos>
+</biblioteca>

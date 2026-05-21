@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE alumnos [
+  <!ELEMENT alumnos (alumno+)>
+  <!ELEMENT alumno (nombre, apellido, email*, nota?)>
+  <!ELEMENT nombre (#PCDATA)>
+  <!ELEMENT apellido (#PCDATA)>
+  <!ELEMENT email (#PCDATA)>
+  <!ELEMENT nota (#PCDATA)>
+  <!ATTLIST alumno
+    id    ID                       #REQUIRED
+    curso (1DAM|2DAM|1DAW|2DAW)   #REQUIRED
+  >
+]>
+<alumnos>
+  <alumno id="A1" curso="1DAM">
+    <nombre>Ana</nombre>
+    <apellido>Garcia</apellido>
+    <email>ana@ejemplo.com</email>
+    <nota>8.5</nota>
+  </alumno>
+  <alumno id="A2" curso="2DAM">
+    <nombre>Luis</nombre>
+    <apellido>Perez</apellido>
+  </alumno>
+  <alumno id="A3" curso="1DAW">
+    <nombre>Maria</nombre>
+    <apellido>Lopez</apellido>
+    <email>maria@a.com</email>
+    <email>maria.lopez@b.com</email>
+  </alumno>
+</alumnos>

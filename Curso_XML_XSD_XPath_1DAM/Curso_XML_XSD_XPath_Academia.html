@@ -1,0 +1,1816 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Curso XML + XSD + XPath - Academia Interactiva</title>
+  <style>
+    :root {
+      --bg: #e7efe9;
+      --bg-deep: #d5e0da;
+      --paper: rgba(250, 253, 251, 0.94);
+      --paper-strong: rgba(255, 255, 255, 0.98);
+      --paper-soft: rgba(243, 248, 245, 0.9);
+      --ink: #17201b;
+      --ink-soft: #55615a;
+      --line: rgba(25, 35, 29, 0.1);
+      --line-strong: rgba(25, 35, 29, 0.18);
+      --accent: #127a68;
+      --accent-2: #0b5874;
+      --accent-3: #c96a2f;
+      --accent-4: #d8a44f;
+      --ok: #1d6a41;
+      --warn: #966118;
+      --bad: #8a3129;
+      --dark: #101618;
+      --dark-2: #171f22;
+      --shadow: 0 26px 80px rgba(32, 48, 40, 0.15);
+      --shadow-soft: 0 16px 36px rgba(32, 48, 40, 0.11);
+      --glow: 0 0 0 1px rgba(255,255,255,0.22) inset;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --max: 1380px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(11,88,116,0.18), transparent 22%),
+        radial-gradient(circle at top right, rgba(201,106,47,0.16), transparent 22%),
+        linear-gradient(180deg, #f7fbf8 0%, var(--bg) 36%, var(--bg-deep) 100%);
+      font-family: Candara, Corbel, "Segoe UI Variable", sans-serif;
+      line-height: 1.58;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.22;
+      background:
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+      background-size: 38px 38px;
+      mask-image: linear-gradient(180deg, rgba(0,0,0,0.34), transparent 74%);
+    }
+
+    h1, h2, h3, h4, .display, .section-title {
+      font-family: "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      letter-spacing: -0.025em;
+    }
+
+    code, pre, textarea, input {
+      font-family: Consolas, "Cascadia Code", "Courier New", monospace;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 10px;
+      z-index: 30;
+      padding: 10px 14px 0;
+      backdrop-filter: blur(18px);
+    }
+
+    .topbar-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      padding: 14px 18px;
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,0.44);
+      background: rgba(250, 253, 251, 0.78);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--accent-2), var(--accent));
+      box-shadow: var(--shadow);
+      font-size: 1rem;
+      font-weight: 800;
+    }
+
+    .brand-text strong,
+    .brand-text span {
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .brand-text span {
+      color: var(--ink-soft);
+      font-size: 0.92rem;
+      margin-top: 3px;
+    }
+
+    .topnav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .topnav a,
+    .btn,
+    button {
+      color: inherit;
+      text-decoration: none;
+      border-radius: 999px;
+      padding: 11px 16px;
+      border: 1px solid rgba(25,35,29,0.1);
+      background: rgba(255,255,255,0.6);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.5) inset;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+    }
+
+    .topnav a:hover,
+    .btn:hover,
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 24px rgba(25,35,29,0.08);
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .page {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 26px 24px 92px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: minmax(0, 1.18fr) 390px;
+      gap: 28px;
+      padding: 44px;
+      border-radius: 36px;
+      border: 1px solid rgba(255,255,255,0.48);
+      background:
+        radial-gradient(circle at top right, rgba(11,88,116,0.24), transparent 24%),
+        radial-gradient(circle at bottom left, rgba(216,164,79,0.18), transparent 28%),
+        linear-gradient(135deg, rgba(18,122,104,0.12), rgba(201,106,47,0.12)),
+        var(--paper);
+      box-shadow: var(--glow), var(--shadow);
+    }
+
+    .hero::before {
+      content: "XML  /  XSD  /  XPath";
+      position: absolute;
+      right: 30px;
+      top: 26px;
+      color: rgba(11,88,116,0.16);
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      font-size: 0.8rem;
+      font-weight: 800;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -42px;
+      bottom: -42px;
+      width: 220px;
+      height: 220px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(201,106,47,0.28), transparent 66%);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.82);
+      color: var(--ink-soft);
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    .display {
+      margin: 14px 0 18px;
+      font-size: clamp(2.7rem, 6vw, 5.2rem);
+      line-height: 0.92;
+      max-width: 10ch;
+    }
+
+    .lead {
+      max-width: 65ch;
+      margin: 0 0 22px;
+      color: var(--ink-soft);
+      font-size: 1.05rem;
+    }
+
+    .hero-actions,
+    .lab-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .primary {
+      background: var(--ink);
+      color: #fff;
+      border-color: var(--ink);
+    }
+
+    .secondary {
+      background: rgba(255,255,255,0.78);
+    }
+
+    .hero-road {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .flow-chip,
+    .metric,
+    .route-step,
+    .option,
+    .check-list li,
+    .validation-list li {
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(25,35,29,0.08);
+      background: rgba(255,255,255,0.84);
+    }
+
+    .flow-chip strong,
+    .metric strong {
+      display: block;
+    }
+
+    .hero-side {
+      display: grid;
+      gap: 16px;
+      align-content: start;
+    }
+
+    .hero-card,
+    .card,
+    .map-card,
+    .route-card,
+    .lab-card,
+    .practice-card,
+    .test-card,
+    .insight-card,
+    .result-card {
+      border: 1px solid rgba(255,255,255,0.52);
+      border-radius: var(--radius-lg);
+      background: var(--paper);
+      box-shadow: var(--glow), var(--shadow-soft);
+      padding: 20px;
+      transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+    }
+
+    .hero-card:hover,
+    .card:hover,
+    .map-card:hover,
+    .route-card:hover,
+    .lab-card:hover,
+    .practice-card:hover,
+    .test-card:hover,
+    .insight-card:hover,
+    .result-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--glow), 0 22px 46px rgba(32,48,40,0.14);
+      border-color: rgba(11,88,116,0.14);
+    }
+
+    .hero-side .hero-card:first-child {
+      background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(239,246,242,0.94));
+    }
+
+    .hero-side .hero-card:last-child {
+      background:
+        radial-gradient(circle at top right, rgba(216,164,79,0.16), transparent 22%),
+        linear-gradient(180deg, #153746, #1c495d);
+      color: #f4efe4;
+      border-color: rgba(255,255,255,0.08);
+    }
+
+    .hero-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .hero-list-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(25,35,29,0.08);
+      background: linear-gradient(180deg, rgba(255,255,255,0.84), rgba(242,247,244,0.8));
+      font-weight: 700;
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .stat {
+      padding: 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.08);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.92rem;
+      font-family: "Palatino Linotype", Georgia, serif;
+    }
+
+    .section {
+      margin-top: 44px;
+      position: relative;
+    }
+
+    .section::before {
+      content: "";
+      position: absolute;
+      top: -14px;
+      left: 0;
+      width: 84px;
+      height: 4px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent-2), var(--accent), var(--accent-4));
+      opacity: 0.7;
+    }
+
+    .section-header {
+      margin-bottom: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3.3rem);
+      line-height: 0.96;
+    }
+
+    .section-copy {
+      margin: 0;
+      color: var(--ink-soft);
+      max-width: 62ch;
+    }
+
+    .grid-2,
+    .map-grid,
+    .route-grid,
+    .practice-grid,
+    .lab-grid,
+    .test-grid,
+    .insight-grid,
+    .result-grid {
+      display: grid;
+      gap: 20px;
+    }
+
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .map-grid,
+    .route-grid,
+    .insight-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .practice-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .lab-grid { grid-template-columns: 360px minmax(0, 1fr); align-items: start; }
+    .test-grid { grid-template-columns: 1.08fr 0.92fr; }
+    .result-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(25,35,29,0.08);
+      background: rgba(255,255,255,0.84);
+      color: var(--ink-soft);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .map-card,
+    .route-card,
+    .practice-card,
+    .insight-card,
+    .test-card {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(242,247,244,0.94));
+    }
+
+    .map-card::before,
+    .route-card::before,
+    .practice-card::before,
+    .insight-card::before,
+    .test-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent-2), var(--accent), var(--accent-4));
+    }
+
+    .map-card h3,
+    .route-card h3,
+    .practice-card h3,
+    .lab-card h3,
+    .card h3,
+    .test-card h3,
+    .insight-card h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 1.24rem;
+      position: relative;
+      padding-bottom: 10px;
+    }
+
+    .map-card h3::after,
+    .route-card h3::after,
+    .practice-card h3::after,
+    .lab-card h3::after,
+    .card h3::after,
+    .test-card h3::after,
+    .insight-card h3::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 56px;
+      height: 3px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent-2), var(--accent));
+      opacity: 0.56;
+    }
+
+    .map-card p,
+    .route-card p,
+    .practice-card p,
+    .lab-card p,
+    .card p,
+    .test-card p,
+    .insight-card p,
+    li {
+      color: var(--ink-soft);
+    }
+
+    .xml-tree {
+      margin-top: 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(25,35,29,0.08);
+      overflow: hidden;
+      background: rgba(255,255,255,0.86);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+    }
+
+    .xml-tree .tree-head,
+    .result-head {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(25,35,29,0.08);
+      font-weight: 800;
+      background: linear-gradient(180deg, rgba(11,88,116,0.1), rgba(11,88,116,0.05));
+    }
+
+    .tree-lines {
+      padding: 14px;
+      display: grid;
+      gap: 8px;
+      font-size: 0.92rem;
+      color: #274238;
+    }
+
+    .tree-lines span {
+      padding: 7px 10px;
+      border-radius: 12px;
+      background: rgba(18,122,104,0.05);
+      border: 1px solid rgba(18,122,104,0.08);
+    }
+
+    .rel-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto 1fr auto;
+      align-items: center;
+      gap: 12px;
+      margin-top: 16px;
+      font-weight: 700;
+      color: var(--ink-soft);
+    }
+
+    .rel-pill {
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(18,122,104,0.16);
+      background: rgba(18,122,104,0.08);
+      color: var(--ink);
+    }
+
+    .route-step {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      margin-top: 12px;
+    }
+
+    .route-step-index {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      flex: none;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent-2), var(--accent));
+      color: #fff;
+      font-weight: 800;
+    }
+
+    .code-block,
+    .result-output {
+      margin-top: 12px;
+      padding: 16px;
+      border-radius: 22px;
+      background:
+        radial-gradient(circle at top right, rgba(216,164,79,0.08), transparent 26%),
+        linear-gradient(180deg, var(--dark), var(--dark-2));
+      color: #f5f0e4;
+      border: 1px solid rgba(255,255,255,0.08);
+      overflow-x: auto;
+      white-space: pre-wrap;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    .lab-grid > .lab-card:first-child {
+      position: sticky;
+      top: 104px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(242,247,244,0.95));
+    }
+
+    .lab-grid > .lab-card:last-child {
+      background:
+        radial-gradient(circle at top right, rgba(11,88,116,0.12), transparent 20%),
+        linear-gradient(180deg, #f8fbf9, #eef5f1);
+      padding: 24px;
+    }
+
+    .editor {
+      width: 100%;
+      min-height: 350px;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background:
+        radial-gradient(circle at top right, rgba(11,88,116,0.14), transparent 22%),
+        linear-gradient(180deg, var(--dark), var(--dark-2));
+      color: #f7f2e7;
+      padding: 16px;
+      resize: vertical;
+      line-height: 1.58;
+      font-size: 0.95rem;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 18px 30px rgba(16,22,24,0.18);
+    }
+
+    .inline-form {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto auto;
+      gap: 10px;
+      align-items: center;
+      margin-top: 14px;
+    }
+
+    .inline-form input {
+      width: 100%;
+      padding: 13px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(25,35,29,0.1);
+      background: rgba(255,255,255,0.88);
+      color: var(--ink);
+      font-size: 0.95rem;
+    }
+
+    .lab-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 14px;
+    }
+
+    .lab-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(11,88,116,0.14);
+      background: rgba(11,88,116,0.08);
+      color: var(--accent-2);
+      font-weight: 800;
+    }
+
+    .result-stack,
+    .validation-list,
+    .check-list,
+    .options {
+      display: grid;
+      gap: 14px;
+    }
+
+    .result-output {
+      min-height: 126px;
+      max-height: 420px;
+      overflow: auto;
+      font-size: 0.94rem;
+    }
+
+    .metric strong {
+      font-size: 1.8rem;
+      font-family: "Palatino Linotype", Georgia, serif;
+      color: var(--ink);
+    }
+
+    .metric span {
+      color: var(--ink-soft);
+      font-size: 0.9rem;
+    }
+
+    .check-list,
+    .validation-list {
+      list-style: none;
+      padding: 0;
+      margin: 14px 0 0;
+    }
+
+    .validation-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .badge {
+      min-width: 76px;
+      text-align: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .badge-ok { background: rgba(29,106,65,0.12); color: var(--ok); border: 1px solid rgba(29,106,65,0.16); }
+    .badge-warn { background: rgba(150,97,24,0.12); color: var(--warn); border: 1px solid rgba(150,97,24,0.16); }
+    .badge-bad { background: rgba(138,49,41,0.12); color: var(--bad); border: 1px solid rgba(138,49,41,0.16); }
+
+    details {
+      margin-top: 14px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(25,35,29,0.08);
+      background: rgba(255,255,255,0.82);
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .question {
+      padding: 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(25,35,29,0.08);
+      background: rgba(255,255,255,0.82);
+      margin-bottom: 12px;
+    }
+
+    .question h4 {
+      margin: 0 0 10px;
+      font-size: 1.05rem;
+    }
+
+    .option input { margin-top: 4px; }
+
+    .test-result {
+      margin-top: 14px;
+      padding: 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(18,122,104,0.18);
+      background: rgba(18,122,104,0.08);
+      display: none;
+    }
+
+    .test-result.show { display: block; }
+
+    .score {
+      margin: 0 0 8px;
+      font-size: 2.6rem;
+      line-height: 1;
+      font-family: "Palatino Linotype", Georgia, serif;
+    }
+
+    .footer-note {
+      margin-top: 26px;
+      padding: 22px 24px;
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at top right, rgba(11,88,116,0.18), transparent 26%),
+        linear-gradient(180deg, #161b1d, #1d2628);
+      color: #f5f1e6;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: var(--shadow);
+    }
+
+    .status-good { color: var(--ok); }
+    .status-warn { color: var(--warn); }
+    .status-bad { color: var(--bad); }
+
+    @media (max-width: 1080px) {
+      .hero, .grid-2, .map-grid, .route-grid, .practice-grid, .lab-grid, .test-grid, .insight-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-road,
+      .result-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .lab-grid > .lab-card:first-child {
+        position: static;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .page { padding: 20px 16px 82px; }
+      .topbar { top: 0; padding: 0; }
+      .topbar-inner, .hero, .hero-card, .card, .map-card, .route-card, .lab-card, .practice-card, .test-card, .insight-card, .footer-note {
+        border-radius: 20px;
+      }
+
+      .topbar-inner, .hero { padding: 18px; }
+      .display { font-size: clamp(2.2rem, 12vw, 3.4rem); }
+      .hero-road, .result-grid { grid-template-columns: 1fr; }
+      .rel-row, .inline-form { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-mark">XML</div>
+        <div class="brand-text">
+          <strong>Curso XML + XSD + XPath</strong>
+          <span>Academia interactiva complementaria para 1 DAM</span>
+        </div>
+      </div>
+      <nav class="topnav">
+        <a href="#mapa">Mapa</a>
+        <a href="#ruta">Ruta</a>
+        <a href="#laboratorio">Laboratorio</a>
+        <a href="#xsd">XSD</a>
+        <a href="#practicas">Practicas</a>
+        <a href="#test">Test</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="eyebrow">Flujo real de trabajo para 1 DAM</span>
+        <h1 class="display">Estructura, validacion y consultas en una sola pagina</h1>
+        <p class="lead">
+          Este complemento convierte el curso en una experiencia mas visual y mas util para clase:
+          entender el XML, leer el XSD, detectar errores tipicos y practicar XPath de verdad sobre el dataset de biblioteca.
+        </p>
+        <div class="hero-actions">
+          <a class="btn primary" href="#laboratorio">Ir al laboratorio</a>
+          <a class="btn secondary" href="#xsd">Ver reglas XSD</a>
+        </div>
+        <div class="hero-road">
+          <div class="flow-chip">
+            <strong>1. XML</strong>
+            <span>Representa datos con estructura, orden y nodos bien formados.</span>
+          </div>
+          <div class="flow-chip">
+            <strong>2. XSD</strong>
+            <span>Impone reglas: tipos, enumeraciones, secuencias, ids y referencias.</span>
+          </div>
+          <div class="flow-chip">
+            <strong>3. XPath</strong>
+            <span>Hace preguntas al documento y devuelve nodos, texto o valores.</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-side">
+        <article class="hero-card">
+          <h3>Panorama del curso</h3>
+          <p>La pagina sigue exactamente la logica del material original, pero presentada como una academia interactiva.</p>
+          <div class="hero-list">
+            <div class="hero-list-item"><span>Dataset real</span><span>biblioteca.xml</span></div>
+            <div class="hero-list-item"><span>Esquema real</span><span>biblioteca.xsd</span></div>
+            <div class="hero-list-item"><span>Caso invalido</span><span>biblioteca_invalida.xml</span></div>
+            <div class="hero-list-item"><span>Practica clave</span><span>XPath 1.0</span></div>
+          </div>
+        </article>
+        <article class="hero-card">
+          <h3>Indicadores rapidos</h3>
+          <div class="hero-stats">
+            <div class="stat"><strong>4</strong><span>libros en el XML base</span></div>
+            <div class="stat"><strong>3</strong><span>socios registrados</span></div>
+            <div class="stat"><strong>3</strong><span>prestamos iniciales</span></div>
+            <div class="stat"><strong>15</strong><span>consultas XPath clave</span></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="mapa" class="section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Mapa del XML</h2>
+          <p class="section-copy">Antes de lanzar XPath, lo primero es entender la forma del documento. Aqui tienes el dataset real traducido a un mapa visual.</p>
+        </div>
+      </div>
+      <div class="map-grid">
+        <article class="map-card">
+          <div class="tag-row">
+            <span class="tag">Root</span>
+            <span class="tag">version</span>
+            <span class="tag">xsi:noNamespaceSchemaLocation</span>
+          </div>
+          <h3>biblioteca</h3>
+          <p>Es el contenedor principal. Dentro viven tres zonas: libros, socios y prestamos. El XSD espera este orden exacto porque usa <code>xs:sequence</code>.</p>
+          <div class="xml-tree">
+            <div class="tree-head">Jerarquia principal</div>
+            <div class="tree-lines">
+              <span>&lt;biblioteca version="1.0"&gt;</span>
+              <span>&nbsp;&nbsp;&lt;libros&gt;...&lt;/libros&gt;</span>
+              <span>&nbsp;&nbsp;&lt;socios&gt;...&lt;/socios&gt;</span>
+              <span>&nbsp;&nbsp;&lt;prestamos&gt;...&lt;/prestamos&gt;</span>
+              <span>&lt;/biblioteca&gt;</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="map-card">
+          <div class="tag-row">
+            <span class="tag">LibroType</span>
+            <span class="tag">@id = L[0-9]+</span>
+            <span class="tag">precio@moneda = EUR</span>
+          </div>
+          <h3>libros / libro</h3>
+          <p>Cada libro tiene atributos y elementos obligatorios. Aqui estan los datos que mas suelen aparecer en practicas y consultas.</p>
+          <div class="xml-tree">
+            <div class="tree-head">Campos del libro</div>
+            <div class="tree-lines">
+              <span>@id, titulo, autor, anio</span>
+              <span>genero, paginas</span>
+              <span>precio[@moneda], disponible</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="map-card">
+          <div class="tag-row">
+            <span class="tag">PrestamoType</span>
+            <span class="tag">keyref</span>
+            <span class="tag">fechaDevolucion opcional</span>
+          </div>
+          <h3>socios y prestamos</h3>
+          <p>Los prestamos no guardan el objeto entero, guardan referencias. XSD comprueba que <code>socioRef</code> y <code>libroRef</code> apunten a ids existentes.</p>
+          <div class="xml-tree">
+            <div class="tree-head">Relacion entre bloques</div>
+            <div class="tree-lines">
+              <span>socio @id="S1" &lt;-- socioRef</span>
+              <span>libro @id="L2" &lt;-- libroRef</span>
+              <span>estado = ABIERTO o CERRADO</span>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="card" style="margin-top:20px;">
+        <h3>Conexiones del dataset</h3>
+        <p>La gracia del curso no esta solo en leer etiquetas. Esta en entender la integridad del documento y luego hacer preguntas potentes con XPath.</p>
+        <div class="rel-row">
+          <span class="rel-pill">libro @id</span>
+          <span>se declara una sola vez</span>
+          <span>-></span>
+          <span>prestamo/libroRef debe existir</span>
+          <span class="rel-pill">keyref</span>
+        </div>
+        <div class="rel-row">
+          <span class="rel-pill">socio @id</span>
+          <span>identifica al socio</span>
+          <span>-></span>
+          <span>prestamo/socioRef debe existir</span>
+          <span class="rel-pill">keyref</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="ruta" class="section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Ruta de estudio</h2>
+          <p class="section-copy">Esta pagina no cambia el contenido del curso. Lo ordena mejor para que el alumno entienda primero el flujo y luego practique.</p>
+        </div>
+      </div>
+      <div class="route-grid">
+        <article class="route-card">
+          <h3>UT1 · XML</h3>
+          <p>Primero se trabaja la diferencia entre bien formado y valido. El alumno debe dejar de ver XML como "texto raro" y empezar a verlo como estructura de datos.</p>
+          <div class="route-step">
+            <div class="route-step-index">1</div>
+            <div>
+              <strong>Bien formado</strong>
+              <p>Etiquetas cerradas, un solo root, comillas correctas y anidacion valida.</p>
+            </div>
+          </div>
+          <div class="route-step">
+            <div class="route-step-index">2</div>
+            <div>
+              <strong>Elementos y atributos</strong>
+              <p>Los datos principales van en elementos; ids y metadatos breves suelen ir como atributos.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="route-card">
+          <h3>UT2 · XPath</h3>
+          <p>Aqui aparece la parte mas operativa. El alumno hace preguntas al XML y aprende a devolver nodos, texto, filtros y funciones.</p>
+          <div class="route-step">
+            <div class="route-step-index">1</div>
+            <div>
+              <strong>Rutas base</strong>
+              <p><code>/</code>, <code>//</code>, <code>@</code> y <code>[...]</code> son la columna vertebral.</p>
+            </div>
+          </div>
+          <div class="route-step">
+            <div class="route-step-index">2</div>
+            <div>
+              <strong>Funciones</strong>
+              <p><code>count()</code>, <code>sum()</code>, <code>contains()</code> y filtros combinados.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="route-card">
+          <h3>UT3 · XSD</h3>
+          <p>El esquema impone tipos, secuencias, patrones, enumeraciones e integridad referencial. Aqui el curso pasa de "leer XML" a "validar reglas".</p>
+          <div class="route-step">
+            <div class="route-step-index">1</div>
+            <div>
+              <strong>Tipos y reglas</strong>
+              <p><code>xs:element</code>, <code>xs:complexType</code>, <code>xs:simpleType</code> y restricciones.</p>
+            </div>
+          </div>
+          <div class="route-step">
+            <div class="route-step-index">2</div>
+            <div>
+              <strong>Integridad</strong>
+              <p><code>xs:key</code> y <code>xs:keyref</code> para forzar ids unicos y referencias existentes.</p>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="laboratorio" class="section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Laboratorio interactivo</h2>
+          <p class="section-copy">Aqui esta la parte fuerte del complemento: editor XML, evaluacion XPath real en navegador y analisis guiado de errores basados en las reglas del XSD del curso.</p>
+        </div>
+      </div>
+
+      <div class="lab-grid">
+        <article class="lab-card">
+          <h3>Controles del laboratorio</h3>
+          <p>Carga el XML valido, el XML invalido o una version limpia. Despues prueba consultas XPath o ejecuta el analizador didactico del esquema.</p>
+          <div class="lab-toolbar">
+            <button class="active" type="button" data-xml-preset="valido">XML valido</button>
+            <button type="button" data-xml-preset="invalido">XML invalido</button>
+            <button type="button" data-xml-preset="mini">Mini XML</button>
+          </div>
+          <ul class="check-list">
+            <li><strong>XPath real:</strong> usa <code>document.evaluate()</code> del navegador.</li>
+            <li><strong>Analisis XSD guiado:</strong> no sustituye a un validador real, pero reproduce las reglas clave del curso.</li>
+            <li><strong>Ideal para clase:</strong> cambia el XML y muestra al momento que se rompe y por que.</li>
+          </ul>
+          <details open>
+            <summary>Consultas rapidas</summary>
+            <div class="lab-toolbar" style="margin-top:12px;">
+              <button type="button" data-xpath="//libro">Todos los libros</button>
+              <button type="button" data-xpath="//libro/titulo">Titulos</button>
+              <button type="button" data-xpath="//libro[@id='L3']">Libro L3</button>
+              <button type="button" data-xpath="//socio[ciudad='Madrid']">Socios Madrid</button>
+              <button type="button" data-xpath="//prestamo[estado='ABIERTO']">Prestamos abiertos</button>
+              <button type="button" data-xpath="count(//libro)">Cuenta libros</button>
+              <button type="button" data-xpath="sum(//libro/precio)">Suma precios</button>
+              <button type="button" data-xpath="//socio[not(telefono)]">Sin telefono</button>
+            </div>
+          </details>
+          <details>
+            <summary>Reglas que revisa el analizador</summary>
+            <ul class="check-list">
+              <li>Root <code>biblioteca</code> con atributo <code>version</code>.</li>
+              <li>Orden principal: <code>libros</code>, <code>socios</code>, <code>prestamos</code>.</li>
+              <li>Patrones de ids <code>L*</code>, <code>S*</code>, <code>P*</code>.</li>
+              <li>Enumeraciones: <code>SI/NO</code> y <code>ABIERTO/CERRADO</code>.</li>
+              <li>Referencias validas de <code>socioRef</code> y <code>libroRef</code>.</li>
+            </ul>
+          </details>
+        </article>
+
+        <article class="lab-card">
+          <h3>Editor, XPath y resultados</h3>
+          <textarea id="xmlEditor" class="editor" spellcheck="false"></textarea>
+          <div class="inline-form">
+            <input id="xpathInput" value="//libro/titulo" aria-label="Expresion XPath">
+            <button id="runXPath" class="primary" type="button">Evaluar XPath</button>
+            <button id="analyzeXml" type="button">Analizar XML</button>
+          </div>
+          <div class="lab-actions">
+            <div class="lab-status" id="labStatus">Listo para practicar</div>
+            <div class="lab-toolbar">
+              <button id="resetXml" type="button">Reset texto</button>
+              <button id="formatHint" type="button">Ver pista</button>
+            </div>
+          </div>
+
+          <div class="result-stack">
+            <section class="result-card">
+              <div class="result-head">Resumen del documento</div>
+              <div class="result-grid" id="summaryMetrics"></div>
+            </section>
+
+            <section class="result-card">
+              <div class="result-head">Salida XPath</div>
+              <div id="xpathOutput" class="result-output"></div>
+            </section>
+
+            <section class="result-card">
+              <div class="result-head">Analisis de validacion</div>
+              <ul id="validationList" class="validation-list"></ul>
+            </section>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="xsd" class="section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Radiografia del XSD</h2>
+          <p class="section-copy">El curso ya trae un esquema bastante decente para 1 DAM. Aqui lo tienes descompuesto visualmente para que no se vea como un bloque enorme de etiquetas.</p>
+        </div>
+      </div>
+      <div class="insight-grid">
+        <article class="insight-card">
+          <div class="tag-row">
+            <span class="tag">Tipos simples</span>
+            <span class="tag">pattern</span>
+            <span class="tag">enumeration</span>
+          </div>
+          <h3>Ids y enums</h3>
+          <p>El XSD define tipos para los identificadores y para varios valores cerrados. Esta es una de las mejores partes del curso porque enseña reglas utiles de verdad.</p>
+          <div class="code-block">&lt;xs:simpleType name="IdLibroType"&gt;
+  &lt;xs:restriction base="xs:string"&gt;
+    &lt;xs:pattern value="L[0-9]+"/&gt;
+  &lt;/xs:restriction&gt;
+&lt;/xs:simpleType&gt;
+
+&lt;xs:simpleType name="SiNoType"&gt;
+  &lt;xs:restriction base="xs:string"&gt;
+    &lt;xs:enumeration value="SI"/&gt;
+    &lt;xs:enumeration value="NO"/&gt;
+  &lt;/xs:restriction&gt;
+&lt;/xs:simpleType&gt;</div>
+        </article>
+
+        <article class="insight-card">
+          <div class="tag-row">
+            <span class="tag">Tipos complejos</span>
+            <span class="tag">sequence</span>
+            <span class="tag">atributos</span>
+          </div>
+          <h3>LibroType y PrestamoType</h3>
+          <p>La secuencia es obligatoria. Si el XML cambia el orden de hijos, el validador puede fallar aunque las etiquetas existan.</p>
+          <div class="code-block">&lt;xs:complexType name="PrestamoType"&gt;
+  &lt;xs:sequence&gt;
+    &lt;xs:element name="socioRef" type="IdSocioType"/&gt;
+    &lt;xs:element name="libroRef" type="IdLibroType"/&gt;
+    &lt;xs:element name="fechaPrestamo" type="xs:date"/&gt;
+    &lt;xs:element name="fechaDevolucion" type="xs:date" minOccurs="0"/&gt;
+    &lt;xs:element name="estado" type="EstadoPrestamoType"/&gt;
+  &lt;/xs:sequence&gt;
+&lt;/xs:complexType&gt;</div>
+        </article>
+
+        <article class="insight-card">
+          <div class="tag-row">
+            <span class="tag">Integridad</span>
+            <span class="tag">xs:key</span>
+            <span class="tag">xs:keyref</span>
+          </div>
+          <h3>La parte mas potente</h3>
+          <p>Este punto sube el nivel del curso: no solo hay estructura, tambien hay integridad referencial. Un prestamo no puede apuntar a un socio o libro inexistente.</p>
+          <div class="code-block">&lt;xs:keyref name="PrestamoSocioRef" refer="SocioIdKey"&gt;
+  &lt;xs:selector xpath="prestamos/prestamo"/&gt;
+  &lt;xs:field xpath="socioRef"/&gt;
+&lt;/xs:keyref&gt;
+
+&lt;xs:keyref name="PrestamoLibroRef" refer="LibroIdKey"&gt;
+  &lt;xs:selector xpath="prestamos/prestamo"/&gt;
+  &lt;xs:field xpath="libroRef"/&gt;
+&lt;/xs:keyref&gt;</div>
+        </article>
+      </div>
+      <div class="grid-2" style="margin-top:20px;">
+        <article class="card">
+          <h3>Errores tipicos que el alumno debe ver</h3>
+          <ul class="check-list">
+            <li><strong>Bien formado:</strong> si falta un cierre o hay comillas rotas, el XML ni se parsea.</li>
+            <li><strong>Enumeracion:</strong> <code>QUIZAS</code> falla porque <code>disponible</code> solo admite <code>SI</code> o <code>NO</code>.</li>
+            <li><strong>Orden:</strong> con <code>xs:sequence</code> no basta con "tener las etiquetas"; importa en que orden aparecen.</li>
+            <li><strong>Referencias:</strong> <code>S999</code> o <code>L999</code> rompen la integridad.</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>Ampliaciones buenas para examen</h3>
+          <ul class="check-list">
+            <li>Limitar <code>genero</code> con enumeraciones.</li>
+            <li>Restringir <code>anio</code> con rango 1900-2100.</li>
+            <li>Forzar <code>precio &gt;= 0</code>.</li>
+            <li>Definir un patron de 9 digitos para <code>telefono</code>.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="practicas" class="section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Practicas y proyecto</h2>
+          <p class="section-copy">El contenido ya existia en el curso. Aqui se reorganiza para que sea mas facil de impartir y mas facil de repasar antes de examen.</p>
+        </div>
+      </div>
+      <div class="practice-grid">
+        <article class="practice-card">
+          <h3>Bloque XPath</h3>
+          <p>Secuencia recomendada para clase: empezar por seleccion simple, subir a filtros y cerrar con funciones.</p>
+          <ul class="check-list">
+            <li><code>//libro</code></li>
+            <li><code>//libro/titulo</code></li>
+            <li><code>//libro[genero='Fantasia']</code></li>
+            <li><code>//libro[paginas &gt; 200]/titulo</code></li>
+            <li><code>//socio[not(telefono)]</code></li>
+            <li><code>count(//prestamo[estado='ABIERTO'])</code></li>
+          </ul>
+          <details>
+            <summary>Como sacarle partido en clase</summary>
+            <p>Haz primero la ruta larga, luego la corta. Ejemplo: <code>/biblioteca/libros/libro</code> y despues <code>//libro</code>. Asi el alumno entiende de donde sale el atajo.</p>
+          </details>
+        </article>
+
+        <article class="practice-card">
+          <h3>Bloque XSD</h3>
+          <p>La practica fuerte del curso es abrir el XML invalido, validarlo y corregirlo hasta dejarlo listo.</p>
+          <ul class="check-list">
+            <li>Corregir <code>disponible = QUIZAS</code>.</li>
+            <li>Arreglar <code>socioRef = S999</code>.</li>
+            <li>Arreglar <code>libroRef = L999</code>.</li>
+            <li>Revisar si el root enlaza bien el esquema.</li>
+          </ul>
+          <details>
+            <summary>Idea pedagogica</summary>
+            <p>Este ejercicio enseña muy bien la diferencia entre error estructural y error de reglas. Es uno de los mejores puntos del curso para clase practica.</p>
+          </details>
+        </article>
+
+        <article class="practice-card">
+          <h3>Proyecto final</h3>
+          <p>El cierre natural del curso es demostrar el flujo completo: corregir, ampliar y consultar.</p>
+          <ul class="check-list">
+            <li>Crear <code>biblioteca_corregida.xml</code>.</li>
+            <li>Anadir un libro nuevo con id valido.</li>
+            <li>Anadir un socio nuevo con id valido.</li>
+            <li>Anadir un prestamo que apunte al socio y libro nuevos.</li>
+            <li>Resolver las 12 consultas obligatorias.</li>
+          </ul>
+        </article>
+
+        <article class="practice-card">
+          <h3>Checklist de dominio</h3>
+          <p>Si el alumno puede hacer esto sin copiar, va bien para 1 DAM.</p>
+          <ul class="check-list">
+            <li>Escribir un XML bien formado desde cero.</li>
+            <li>Explicar la diferencia entre bien formado y valido.</li>
+            <li>Detectar por que falla una enumeracion.</li>
+            <li>Entender un <code>keyref</code> roto.</li>
+            <li>Resolver 10-15 consultas XPath con filtros y funciones.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="test" class="section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Test final rapido</h2>
+          <p class="section-copy">Autoevaluacion corta para repasar conceptos base del curso y detectar si el alumno esta listo para pasar a practica real.</p>
+        </div>
+      </div>
+      <div class="test-grid">
+        <article class="test-card">
+          <h3>Preguntas</h3>
+          <form id="quizForm">
+            <div class="question">
+              <h4>1. Un XML "valido" significa:</h4>
+              <div class="options">
+                <label class="option"><input type="radio" name="q1" value="a">Esta bien formado y ademas cumple el XSD.</label>
+                <label class="option"><input type="radio" name="q1" value="b">Solo tiene un root.</label>
+                <label class="option"><input type="radio" name="q1" value="c">Tiene atributos en todas las etiquetas.</label>
+              </div>
+            </div>
+
+            <div class="question">
+              <h4>2. Que devuelve <code>//libro/titulo/text()</code>?</h4>
+              <div class="options">
+                <label class="option"><input type="radio" name="q2" value="a">Los nodos <code>&lt;titulo&gt;</code>.</label>
+                <label class="option"><input type="radio" name="q2" value="b">Solo el contenido textual de los titulos.</label>
+                <label class="option"><input type="radio" name="q2" value="c">El atributo id del libro.</label>
+              </div>
+            </div>
+
+            <div class="question">
+              <h4>3. En el XSD del curso, <code>QUIZAS</code> en <code>&lt;disponible&gt;</code> provoca:</h4>
+              <div class="options">
+                <label class="option"><input type="radio" name="q3" value="a">Un error de enumeracion.</label>
+                <label class="option"><input type="radio" name="q3" value="b">Un error de parser XML.</label>
+                <label class="option"><input type="radio" name="q3" value="c">Un error de atributo repetido.</label>
+              </div>
+            </div>
+
+            <div class="question">
+              <h4>4. Que comprueba un <code>xs:keyref</code>?</h4>
+              <div class="options">
+                <label class="option"><input type="radio" name="q4" value="a">Que exista la referencia apuntada.</label>
+                <label class="option"><input type="radio" name="q4" value="b">Que todos los textos tengan la misma longitud.</label>
+                <label class="option"><input type="radio" name="q4" value="c">Que el XML tenga comentario inicial.</label>
+              </div>
+            </div>
+
+            <div class="question">
+              <h4>5. En <code>xs:sequence</code> el orden:</h4>
+              <div class="options">
+                <label class="option"><input type="radio" name="q5" value="a">No importa nunca.</label>
+                <label class="option"><input type="radio" name="q5" value="b">Importa, porque define la secuencia esperada.</label>
+                <label class="option"><input type="radio" name="q5" value="c">Solo importa si hay atributos.</label>
+              </div>
+            </div>
+
+            <div class="question">
+              <h4>6. Que consulta cuenta los prestamos abiertos?</h4>
+              <div class="options">
+                <label class="option"><input type="radio" name="q6" value="a"><code>sum(//prestamo)</code></label>
+                <label class="option"><input type="radio" name="q6" value="b"><code>count(//prestamo[estado='ABIERTO'])</code></label>
+                <label class="option"><input type="radio" name="q6" value="c"><code>//prestamo/@estado</code></label>
+              </div>
+            </div>
+          </form>
+        </article>
+
+        <article class="test-card">
+          <h3>Correccion</h3>
+          <p>Haz el test y comprueba si los conceptos base estan consolidados.</p>
+          <div class="lab-toolbar">
+            <button id="gradeQuiz" class="primary" type="button">Corregir test</button>
+            <button id="resetQuiz" type="button">Reset test</button>
+          </div>
+          <div id="quizResult" class="test-result">
+            <div id="scoreText" class="score">0/6</div>
+            <p id="scoreMessage"></p>
+            <ul id="scoreDetails" class="check-list"></ul>
+          </div>
+          <div class="footer-note">
+            <strong>Lectura rapida del resultado</strong>
+            <p>5-6: ya tienes base buena. 3-4: falta otra vuelta a XSD o XPath. 0-2: vuelve primero a la diferencia entre XML bien formado, XML valido y consultas XPath.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const XML_VALIDO = `<?xml version="1.0"?>
+<biblioteca version="1.0"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="biblioteca.xsd">
+  <libros>
+    <libro id="L1">
+      <titulo>El bosque azul</titulo>
+      <autor>Ana Ruiz</autor>
+      <anio>2018</anio>
+      <genero>Fantasia</genero>
+      <paginas>220</paginas>
+      <precio moneda="EUR">12.95</precio>
+      <disponible>SI</disponible>
+    </libro>
+    <libro id="L2">
+      <titulo>SQL para principiantes</titulo>
+      <autor>Javier Soto</autor>
+      <anio>2022</anio>
+      <genero>Tecnologia</genero>
+      <paginas>180</paginas>
+      <precio moneda="EUR">19.90</precio>
+      <disponible>NO</disponible>
+    </libro>
+    <libro id="L3">
+      <titulo>Viaje al centro</titulo>
+      <autor>Marta Gil</autor>
+      <anio>2015</anio>
+      <genero>Aventura</genero>
+      <paginas>310</paginas>
+      <precio moneda="EUR">9.50</precio>
+      <disponible>SI</disponible>
+    </libro>
+    <libro id="L4">
+      <titulo>Aprender tablas</titulo>
+      <autor>Diego Leon</autor>
+      <anio>2020</anio>
+      <genero>Tecnologia</genero>
+      <paginas>260</paginas>
+      <precio moneda="EUR">14.00</precio>
+      <disponible>SI</disponible>
+    </libro>
+  </libros>
+
+  <socios>
+    <socio id="S1">
+      <nombre>Ana Ruiz</nombre>
+      <email>ana.ruiz@example.com</email>
+      <ciudad>Madrid</ciudad>
+      <telefono>600111111</telefono>
+    </socio>
+    <socio id="S2">
+      <nombre>Luis Perez</nombre>
+      <email>luis.perez@example.com</email>
+      <ciudad>Sevilla</ciudad>
+    </socio>
+    <socio id="S3">
+      <nombre>Marta Gil</nombre>
+      <email>marta.gil@example.com</email>
+      <ciudad>Madrid</ciudad>
+      <telefono>600333333</telefono>
+    </socio>
+  </socios>
+
+  <prestamos>
+    <prestamo id="P1">
+      <socioRef>S1</socioRef>
+      <libroRef>L2</libroRef>
+      <fechaPrestamo>2026-02-10</fechaPrestamo>
+      <estado>ABIERTO</estado>
+    </prestamo>
+    <prestamo id="P2">
+      <socioRef>S2</socioRef>
+      <libroRef>L1</libroRef>
+      <fechaPrestamo>2026-02-11</fechaPrestamo>
+      <fechaDevolucion>2026-02-15</fechaDevolucion>
+      <estado>CERRADO</estado>
+    </prestamo>
+    <prestamo id="P3">
+      <socioRef>S3</socioRef>
+      <libroRef>L3</libroRef>
+      <fechaPrestamo>2026-02-12</fechaPrestamo>
+      <estado>ABIERTO</estado>
+    </prestamo>
+  </prestamos>
+</biblioteca>`;
+
+    const XML_INVALIDO = `<?xml version="1.0"?>
+<biblioteca version="1.0"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="biblioteca.xsd">
+  <libros>
+    <libro id="L1">
+      <titulo>El bosque azul</titulo>
+      <autor>Ana Ruiz</autor>
+      <anio>2018</anio>
+      <genero>Fantasia</genero>
+      <paginas>220</paginas>
+      <precio moneda="EUR">12.95</precio>
+      <disponible>QUIZAS</disponible>
+    </libro>
+  </libros>
+
+  <socios>
+    <socio id="S1">
+      <nombre>Ana Ruiz</nombre>
+      <email>ana.ruiz@example.com</email>
+      <ciudad>Madrid</ciudad>
+    </socio>
+  </socios>
+
+  <prestamos>
+    <prestamo id="P1">
+      <socioRef>S999</socioRef>
+      <libroRef>L999</libroRef>
+      <fechaPrestamo>2026-02-10</fechaPrestamo>
+      <estado>ABIERTO</estado>
+    </prestamo>
+  </prestamos>
+</biblioteca>`;
+
+    const XML_MINI = `<?xml version="1.0"?>
+<alumnos>
+  <alumno id="A1">
+    <nombre>Ana</nombre>
+    <edad>19</edad>
+  </alumno>
+  <alumno id="A2">
+    <nombre>Luis</nombre>
+    <edad>20</edad>
+  </alumno>
+</alumnos>`;
+
+    const xmlEditor = document.getElementById("xmlEditor");
+    const xpathInput = document.getElementById("xpathInput");
+    const xpathOutput = document.getElementById("xpathOutput");
+    const validationList = document.getElementById("validationList");
+    const summaryMetrics = document.getElementById("summaryMetrics");
+    const labStatus = document.getElementById("labStatus");
+    const presetButtons = document.querySelectorAll("[data-xml-preset]");
+    const quickXPathButtons = document.querySelectorAll("[data-xpath]");
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;");
+    }
+
+    function setStatus(message, tone) {
+      const icon = tone === "bad" ? "Error" : tone === "warn" ? "Aviso" : "OK";
+      labStatus.textContent = icon + ": " + message;
+    }
+
+    function parseXml(xmlText) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(xmlText, "application/xml");
+      const parserError = doc.getElementsByTagName("parsererror")[0];
+      if (parserError) {
+        throw new Error("XML no bien formado. Revisa cierres, anidacion y comillas.");
+      }
+      return doc;
+    }
+
+    function getText(node, tagName) {
+      const child = Array.from(node.children).find((item) => item.tagName === tagName);
+      return child ? child.textContent.trim() : "";
+    }
+
+    function evaluateXPath(doc, expression) {
+      return doc.evaluate(expression, doc, null, XPathResult.ANY_TYPE, null);
+    }
+
+    function renderXPathResult(result) {
+      switch (result.resultType) {
+        case XPathResult.NUMBER_TYPE:
+          return String(result.numberValue);
+        case XPathResult.STRING_TYPE:
+          return result.stringValue;
+        case XPathResult.BOOLEAN_TYPE:
+          return String(result.booleanValue);
+        default: {
+          const serializer = new XMLSerializer();
+          const lines = [];
+          let node = result.iterateNext();
+          while (node) {
+            if (node.nodeType === Node.ATTRIBUTE_NODE) {
+              lines.push("@" + node.name + '="' + node.value + '"');
+            } else if (node.nodeType === Node.TEXT_NODE) {
+              lines.push(node.nodeValue);
+            } else {
+              lines.push(serializer.serializeToString(node));
+            }
+            node = result.iterateNext();
+          }
+          return lines.length ? lines.join("\n") : "(0 nodos)";
+        }
+      }
+    }
+
+    function addValidationItem(items, level, message) {
+      items.push({ level, message });
+    }
+
+    function renderValidation(items) {
+      validationList.innerHTML = "";
+      items.forEach((item) => {
+        const li = document.createElement("li");
+        li.className = "validation-item";
+        const badge = document.createElement("span");
+        badge.className = "badge " + (item.level === "ok" ? "badge-ok" : item.level === "warn" ? "badge-warn" : "badge-bad");
+        badge.textContent = item.level;
+        const text = document.createElement("div");
+        text.textContent = item.message;
+        li.appendChild(badge);
+        li.appendChild(text);
+        validationList.appendChild(li);
+      });
+    }
+
+    function renderSummary(doc) {
+      const root = doc.documentElement;
+      const metrics = [
+        { label: "Root", value: root ? root.tagName : "-" },
+        { label: "Libros", value: doc.getElementsByTagName("libro").length },
+        { label: "Socios", value: doc.getElementsByTagName("socio").length },
+        { label: "Prestamos", value: doc.getElementsByTagName("prestamo").length }
+      ];
+
+      summaryMetrics.innerHTML = "";
+      metrics.forEach((metric) => {
+        const card = document.createElement("div");
+        card.className = "metric";
+        card.innerHTML = "<strong>" + escapeHtml(metric.value) + "</strong><span>" + escapeHtml(metric.label) + "</span>";
+        summaryMetrics.appendChild(card);
+      });
+    }
+
+    function isIsoDate(value) {
+      return /^\d{4}-\d{2}-\d{2}$/.test(value);
+    }
+
+    function analyzeBiblioteca(doc) {
+      const items = [];
+      const root = doc.documentElement;
+      if (!root || root.tagName !== "biblioteca") {
+        addValidationItem(items, "bad", "El root no es biblioteca. El XSD del curso espera exactamente <biblioteca>.");
+        return items;
+      }
+
+      if (root.getAttribute("version")) {
+        addValidationItem(items, "ok", "El root biblioteca tiene atributo version.");
+      } else {
+        addValidationItem(items, "bad", "Falta el atributo obligatorio version en biblioteca.");
+      }
+
+      const directChildNames = Array.from(root.children).map((child) => child.tagName);
+      const expected = ["libros", "socios", "prestamos"];
+      if (expected.every((name, index) => directChildNames[index] === name)) {
+        addValidationItem(items, "ok", "El orden principal coincide con xs:sequence: libros, socios, prestamos.");
+      } else {
+        addValidationItem(items, "bad", "El orden principal no coincide con xs:sequence. Debe ser libros, socios, prestamos.");
+      }
+
+      const libroIds = new Set();
+      const socioIds = new Set();
+      const prestamoIds = new Set();
+
+      Array.from(doc.getElementsByTagName("libro")).forEach((libro) => {
+        const id = libro.getAttribute("id");
+        if (/^L[0-9]+$/.test(id || "")) addValidationItem(items, "ok", "Libro " + id + " cumple el patron IdLibroType.");
+        else addValidationItem(items, "bad", "Hay un libro con id invalido. Debe seguir el patron L[0-9]+.");
+        if (id) {
+          if (libroIds.has(id)) addValidationItem(items, "bad", "El id de libro " + id + " esta repetido. xs:key exige unicidad.");
+          libroIds.add(id);
+        }
+
+        ["titulo", "autor", "anio", "genero", "paginas", "precio", "disponible"].forEach((tag) => {
+          if (!Array.from(libro.children).find((child) => child.tagName === tag)) {
+            addValidationItem(items, "bad", "Al libro " + (id || "(sin id)") + " le falta el elemento obligatorio " + tag + ".");
+          }
+        });
+
+        const disponible = getText(libro, "disponible");
+        if (disponible === "SI" || disponible === "NO") addValidationItem(items, "ok", "Libro " + (id || "?") + " usa disponible valido: " + disponible + ".");
+        else if (disponible) addValidationItem(items, "bad", "Libro " + (id || "?") + " tiene disponible = " + disponible + ". Solo admite SI o NO.");
+
+        const anio = getText(libro, "anio");
+        if (anio && !/^[1-9][0-9]*$/.test(anio)) addValidationItem(items, "bad", "Libro " + (id || "?") + " tiene anio no compatible con xs:positiveInteger.");
+        const paginas = getText(libro, "paginas");
+        if (paginas && !/^[1-9][0-9]*$/.test(paginas)) addValidationItem(items, "bad", "Libro " + (id || "?") + " tiene paginas no compatibles con xs:positiveInteger.");
+
+        const precio = Array.from(libro.children).find((child) => child.tagName === "precio");
+        if (precio) {
+          const moneda = precio.getAttribute("moneda");
+          if (moneda === "EUR") addValidationItem(items, "ok", "Libro " + (id || "?") + " usa moneda valida EUR.");
+          else addValidationItem(items, "bad", "Libro " + (id || "?") + " tiene moneda invalida. El XSD solo admite EUR.");
+        }
+      });
+
+      Array.from(doc.getElementsByTagName("socio")).forEach((socio) => {
+        const id = socio.getAttribute("id");
+        if (/^S[0-9]+$/.test(id || "")) addValidationItem(items, "ok", "Socio " + id + " cumple el patron IdSocioType.");
+        else addValidationItem(items, "bad", "Hay un socio con id invalido. Debe seguir el patron S[0-9]+.");
+        if (id) {
+          if (socioIds.has(id)) addValidationItem(items, "bad", "El id de socio " + id + " esta repetido. xs:key exige unicidad.");
+          socioIds.add(id);
+        }
+        ["nombre", "email", "ciudad"].forEach((tag) => {
+          if (!Array.from(socio.children).find((child) => child.tagName === tag)) {
+            addValidationItem(items, "bad", "Al socio " + (id || "(sin id)") + " le falta el elemento obligatorio " + tag + ".");
+          }
+        });
+      });
+
+      Array.from(doc.getElementsByTagName("prestamo")).forEach((prestamo) => {
+        const id = prestamo.getAttribute("id");
+        if (/^P[0-9]+$/.test(id || "")) addValidationItem(items, "ok", "Prestamo " + id + " cumple el patron IdPrestamoType.");
+        else addValidationItem(items, "bad", "Hay un prestamo con id invalido. Debe seguir el patron P[0-9]+.");
+        if (id) {
+          if (prestamoIds.has(id)) addValidationItem(items, "bad", "El id de prestamo " + id + " esta repetido. xs:key exige unicidad.");
+          prestamoIds.add(id);
+        }
+
+        const estado = getText(prestamo, "estado");
+        if (estado === "ABIERTO" || estado === "CERRADO") addValidationItem(items, "ok", "Prestamo " + (id || "?") + " usa estado valido: " + estado + ".");
+        else if (estado) addValidationItem(items, "bad", "Prestamo " + (id || "?") + " tiene un estado no permitido.");
+
+        const socioRef = getText(prestamo, "socioRef");
+        const libroRef = getText(prestamo, "libroRef");
+        if (socioRef && socioIds.has(socioRef)) addValidationItem(items, "ok", "Prestamo " + (id || "?") + " referencia un socio existente: " + socioRef + ".");
+        else if (socioRef) addValidationItem(items, "bad", "Prestamo " + (id || "?") + " referencia socio inexistente: " + socioRef + ".");
+
+        if (libroRef && libroIds.has(libroRef)) addValidationItem(items, "ok", "Prestamo " + (id || "?") + " referencia un libro existente: " + libroRef + ".");
+        else if (libroRef) addValidationItem(items, "bad", "Prestamo " + (id || "?") + " referencia libro inexistente: " + libroRef + ".");
+
+        const fechaPrestamo = getText(prestamo, "fechaPrestamo");
+        if (fechaPrestamo && !isIsoDate(fechaPrestamo)) addValidationItem(items, "bad", "Prestamo " + (id || "?") + " tiene fechaPrestamo fuera del patron yyyy-mm-dd.");
+        const fechaDevolucion = getText(prestamo, "fechaDevolucion");
+        if (fechaDevolucion && !isIsoDate(fechaDevolucion)) addValidationItem(items, "bad", "Prestamo " + (id || "?") + " tiene fechaDevolucion fuera del patron yyyy-mm-dd.");
+      });
+
+      if (!items.some((item) => item.level === "bad")) {
+        addValidationItem(items, "ok", "No se detectan fallos fuertes en las reglas principales del esquema.");
+      }
+      return items;
+    }
+
+    function analyzeCurrentXml() {
+      try {
+        const doc = parseXml(xmlEditor.value.trim());
+        renderSummary(doc);
+        const items = doc.documentElement.tagName === "biblioteca"
+          ? analyzeBiblioteca(doc)
+          : [{ level: "warn", message: "El analizador de esquema esta pensado para biblioteca.xml. El documento actual sirve para practicar bien formado, pero no para comprobar el XSD del curso." }];
+        renderValidation(items);
+        setStatus("Analisis completado", items.some((item) => item.level === "bad") ? "warn" : "ok");
+      } catch (error) {
+        renderValidation([{ level: "bad", message: error.message }]);
+        summaryMetrics.innerHTML = "";
+        setStatus(error.message, "bad");
+      }
+    }
+
+    function runXPathQuery() {
+      try {
+        const doc = parseXml(xmlEditor.value.trim());
+        renderSummary(doc);
+        const expr = xpathInput.value.trim();
+        if (!expr) throw new Error("Escribe una expresion XPath.");
+        xpathOutput.textContent = renderXPathResult(evaluateXPath(doc, expr));
+        setStatus("XPath evaluado correctamente", "ok");
+      } catch (error) {
+        xpathOutput.textContent = "";
+        setStatus(error.message, "bad");
+      }
+    }
+
+    presetButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        presetButtons.forEach((item) => item.classList.remove("active"));
+        button.classList.add("active");
+        if (button.dataset.xmlPreset === "valido") xmlEditor.value = XML_VALIDO;
+        else if (button.dataset.xmlPreset === "invalido") xmlEditor.value = XML_INVALIDO;
+        else xmlEditor.value = XML_MINI;
+        analyzeCurrentXml();
+      });
+    });
+
+    quickXPathButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        xpathInput.value = button.dataset.xpath;
+        runXPathQuery();
+      });
+    });
+
+    document.getElementById("runXPath").addEventListener("click", runXPathQuery);
+    document.getElementById("analyzeXml").addEventListener("click", analyzeCurrentXml);
+    document.getElementById("resetXml").addEventListener("click", () => {
+      xmlEditor.value = XML_VALIDO;
+      presetButtons.forEach((item) => item.classList.remove("active"));
+      document.querySelector('[data-xml-preset="valido"]').classList.add("active");
+      xpathOutput.textContent = "";
+      analyzeCurrentXml();
+    });
+    document.getElementById("formatHint").addEventListener("click", () => {
+      xpathOutput.textContent = "Pista rapida:\n- Empieza por //libro o //socio\n- Si quieres texto, usa /text()\n- Si quieres filtrar, usa [...]\n- Si quieres contar, usa count(...)";
+      setStatus("Pista cargada", "ok");
+    });
+
+    const answers = { q1: "a", q2: "b", q3: "a", q4: "a", q5: "b", q6: "b" };
+    const explanations = {
+      q1: "Valido significa bien formado mas cumplimiento del XSD.",
+      q2: "text() devuelve el contenido textual del nodo, no el elemento completo.",
+      q3: "SiNoType solo admite SI y NO, por eso QUIZAS falla.",
+      q4: "keyref obliga a que la referencia exista en el conjunto definido por key.",
+      q5: "sequence fija el orden esperado de los hijos.",
+      q6: "count(//prestamo[estado='ABIERTO']) cuenta solo los prestamos abiertos."
+    };
+
+    const quizForm = document.getElementById("quizForm");
+    const scoreText = document.getElementById("scoreText");
+    const scoreMessage = document.getElementById("scoreMessage");
+    const scoreDetails = document.getElementById("scoreDetails");
+    const quizResult = document.getElementById("quizResult");
+
+    document.getElementById("gradeQuiz").addEventListener("click", () => {
+      let score = 0;
+      scoreDetails.innerHTML = "";
+      Object.keys(answers).forEach((key, index) => {
+        const choice = quizForm.querySelector("input[name='" + key + "']:checked");
+        const li = document.createElement("li");
+        if (choice && choice.value === answers[key]) {
+          score += 1;
+          li.innerHTML = "<strong class='status-good'>Pregunta " + (index + 1) + ": correcta.</strong> " + explanations[key];
+        } else {
+          li.innerHTML = "<strong class='status-bad'>Pregunta " + (index + 1) + ": revisa esto.</strong> " + explanations[key];
+        }
+        scoreDetails.appendChild(li);
+      });
+      scoreText.textContent = score + "/6";
+      if (score >= 5) scoreMessage.innerHTML = "<span class='status-good'><strong>Muy bien.</strong></span> Ya tienes una base bastante firme para 1 DAM.";
+      else if (score >= 3) scoreMessage.innerHTML = "<span class='status-warn'><strong>Vas bien, pero todavia hay huecos.</strong></span>";
+      else scoreMessage.innerHTML = "<span class='status-bad'><strong>Necesitas otra vuelta completa.</strong></span>";
+      quizResult.classList.add("show");
+    });
+
+    document.getElementById("resetQuiz").addEventListener("click", () => {
+      quizForm.reset();
+      quizResult.classList.remove("show");
+      scoreText.textContent = "0/6";
+      scoreMessage.textContent = "";
+      scoreDetails.innerHTML = "";
+    });
+
+    xmlEditor.value = XML_VALIDO;
+    analyzeCurrentXml();
+    runXPathQuery();
+  </script>
+</body>
+</html>

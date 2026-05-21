@@ -1,0 +1,10 @@
+<!ELEMENT alumnos (alumno+)>
+<!ELEMENT alumno (nombre, apellido, email*, nota?)>
+<!ELEMENT nombre (#PCDATA)>
+<!ELEMENT apellido (#PCDATA)>
+<!ELEMENT email (#PCDATA)>
+<!ELEMENT nota (#PCDATA)>
+<!ATTLIST alumno
+  id    ID                       #REQUIRED
+  curso (1DAM|2DAM|1DAW|2DAW)   #REQUIRED
+>

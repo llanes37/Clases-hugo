@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ARCHIVO INVALIDO - para practica de deteccion de errores -->
+<!DOCTYPE biblioteca [
+  <!ELEMENT biblioteca (libros, socios, prestamos)>
+  <!ELEMENT libros (libro+)>
+  <!ELEMENT socios (socio+)>
+  <!ELEMENT prestamos (prestamo*)>
+  <!ELEMENT libro (titulo)>
+  <!ELEMENT titulo (#PCDATA)>
+  <!ELEMENT socio (nombre)>
+  <!ELEMENT nombre (#PCDATA)>
+  <!ELEMENT prestamo EMPTY>
+  <!ATTLIST libro   id       ID     #REQUIRED>
+  <!ATTLIST socio   id       ID     #REQUIRED>
+  <!ATTLIST prestamo
+    libroId  IDREF  #REQUIRED
+    socioId  IDREF  #REQUIRED
+  >
+]>
+<biblioteca>
+  <libros>
+    <libro id="L1"><titulo>Dune</titulo></libro>
+    <libro id="L2"><titulo>1984</titulo></libro>
+  </libros>
+  <socios>
+    <socio id="S1"><nombre>Ana Garcia</nombre></socio>
+  </socios>
+  <prestamos>
+    <!-- ERROR 1: libroId="L999" no existe como ID en el documento -->
+    <prestamo libroId="L999" socioId="S1"/>
+    <!-- ERROR 2: socioId="S999" no existe como ID en el documento -->
+    <prestamo libroId="L1" socioId="S999"/>
+  </prestamos>
+</biblioteca>

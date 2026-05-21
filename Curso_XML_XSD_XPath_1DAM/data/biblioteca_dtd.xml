@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE biblioteca [
+  <!ELEMENT biblioteca (libros, socios, prestamos)>
+  <!ELEMENT libros (libro+)>
+  <!ELEMENT socios (socio+)>
+  <!ELEMENT prestamos (prestamo*)>
+  <!ELEMENT libro (titulo)>
+  <!ELEMENT titulo (#PCDATA)>
+  <!ELEMENT socio (nombre)>
+  <!ELEMENT nombre (#PCDATA)>
+  <!ELEMENT prestamo EMPTY>
+  <!ATTLIST libro   id       ID     #REQUIRED>
+  <!ATTLIST socio   id       ID     #REQUIRED>
+  <!ATTLIST prestamo
+    libroId  IDREF  #REQUIRED
+    socioId  IDREF  #REQUIRED
+  >
+]>
+<biblioteca>
+  <libros>
+    <libro id="L1"><titulo>Dune</titulo></libro>
+    <libro id="L2"><titulo>1984</titulo></libro>
+    <libro id="L3"><titulo>El nombre del viento</titulo></libro>
+  </libros>
+  <socios>
+    <socio id="S1"><nombre>Ana Garcia</nombre></socio>
+    <socio id="S2"><nombre>Luis Perez</nombre></socio>
+  </socios>
+  <prestamos>
+    <prestamo libroId="L1" socioId="S1"/>
+    <prestamo libroId="L3" socioId="S2"/>
+  </prestamos>
+</biblioteca>

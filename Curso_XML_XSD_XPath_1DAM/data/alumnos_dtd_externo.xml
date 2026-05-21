@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE alumnos SYSTEM "alumnos.dtd">
+<alumnos>
+  <alumno id="A1" curso="1DAM">
+    <nombre>Ana</nombre>
+    <apellido>Garcia</apellido>
+    <email>ana@ejemplo.com</email>
+    <nota>8.5</nota>
+  </alumno>
+  <alumno id="A2" curso="2DAM">
+    <nombre>Luis</nombre>
+    <apellido>Perez</apellido>
+  </alumno>
+  <alumno id="A3" curso="1DAW">
+    <nombre>Maria</nombre>
+    <apellido>Lopez</apellido>
+    <email>maria@a.com</email>
+    <email>maria.lopez@b.com</email>
+  </alumno>
+</alumnos>

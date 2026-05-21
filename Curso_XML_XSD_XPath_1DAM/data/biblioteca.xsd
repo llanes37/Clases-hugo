@@ -1,0 +1,162 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+  <!-- ========================================================= -->
+  <!-- ! Tipos simples (restricciones)                            -->
+  <!-- ========================================================= -->
+
+  <xs:simpleType name="IdLibroType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="L[0-9]+"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="IdSocioType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="S[0-9]+"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="IdPrestamoType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="P[0-9]+"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="SiNoType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="SI"/>
+      <xs:enumeration value="NO"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="EstadoPrestamoType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ABIERTO"/>
+      <xs:enumeration value="CERRADO"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="MonedaType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="EUR"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- ========================================================= -->
+  <!-- ! Tipos complejos                                          -->
+  <!-- ========================================================= -->
+
+  <xs:complexType name="LibroType">
+    <xs:sequence>
+      <xs:element name="titulo" type="xs:string"/>
+      <xs:element name="autor" type="xs:string"/>
+      <xs:element name="anio" type="xs:positiveInteger"/>
+      <xs:element name="genero" type="xs:string"/>
+      <xs:element name="paginas" type="xs:positiveInteger"/>
+      <xs:element name="precio">
+        <xs:complexType>
+          <xs:simpleContent>
+            <xs:extension base="xs:decimal">
+              <xs:attribute name="moneda" type="MonedaType" use="required"/>
+            </xs:extension>
+          </xs:simpleContent>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="disponible" type="SiNoType"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="IdLibroType" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="SocioType">
+    <xs:sequence>
+      <xs:element name="nombre" type="xs:string"/>
+      <xs:element name="email" type="xs:string"/>
+      <xs:element name="ciudad" type="xs:string"/>
+      <xs:element name="telefono" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="IdSocioType" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="PrestamoType">
+    <xs:sequence>
+      <xs:element name="socioRef" type="IdSocioType"/>
+      <xs:element name="libroRef" type="IdLibroType"/>
+      <xs:element name="fechaPrestamo" type="xs:date"/>
+      <xs:element name="fechaDevolucion" type="xs:date" minOccurs="0"/>
+      <xs:element name="estado" type="EstadoPrestamoType"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="IdPrestamoType" use="required"/>
+  </xs:complexType>
+
+  <!-- ========================================================= -->
+  <!-- ! Elemento raiz                                            -->
+  <!-- ========================================================= -->
+
+  <xs:element name="biblioteca">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="libros">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="libro" type="LibroType" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="socios">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="socio" type="SocioType" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="prestamos">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="prestamo" type="PrestamoType" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+
+      <xs:attribute name="version" type="xs:string" use="required"/>
+      <!-- * Permite atributos de otros namespaces (ej: xsi:noNamespaceSchemaLocation) -->
+      <xs:anyAttribute namespace="##other" processContents="lax"/>
+    </xs:complexType>
+
+    <!-- ======================================================= -->
+    <!-- ! Integridad referencial (avanzado 1 DAM)               -->
+    <!-- ======================================================= -->
+    <!-- * xs:key: ids unicos -->
+    <!-- * xs:keyref: referencias deben existir -->
+
+    <xs:key name="LibroIdKey">
+      <xs:selector xpath="libros/libro"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:key name="SocioIdKey">
+      <xs:selector xpath="socios/socio"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:key name="PrestamoIdKey">
+      <xs:selector xpath="prestamos/prestamo"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="PrestamoSocioRef" refer="SocioIdKey">
+      <xs:selector xpath="prestamos/prestamo"/>
+      <xs:field xpath="socioRef"/>
+    </xs:keyref>
+
+    <xs:keyref name="PrestamoLibroRef" refer="LibroIdKey">
+      <xs:selector xpath="prestamos/prestamo"/>
+      <xs:field xpath="libroRef"/>
+    </xs:keyref>
+
+  </xs:element>
+
+</xs:schema>

@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<biblioteca version="1.0"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="biblioteca.xsd">
+  <libros>
+    <libro id="L1">
+      <titulo>El bosque azul</titulo>
+      <autor>Ana Ruiz</autor>
+      <anio>2018</anio>
+      <genero>Fantasia</genero>
+      <paginas>220</paginas>
+      <precio moneda="EUR">12.95</precio>
+      <disponible>SI</disponible>
+    </libro>
+    <libro id="L2">
+      <titulo>SQL para principiantes</titulo>
+      <autor>Javier Soto</autor>
+      <anio>2022</anio>
+      <genero>Tecnologia</genero>
+      <paginas>180</paginas>
+      <precio moneda="EUR">19.90</precio>
+      <disponible>NO</disponible>
+    </libro>
+    <libro id="L3">
+      <titulo>Viaje al centro</titulo>
+      <autor>Marta Gil</autor>
+      <anio>2015</anio>
+      <genero>Aventura</genero>
+      <paginas>310</paginas>
+      <precio moneda="EUR">9.50</precio>
+      <disponible>SI</disponible>
+    </libro>
+    <libro id="L4">
+      <titulo>Aprender tablas</titulo>
+      <autor>Diego Leon</autor>
+      <anio>2020</anio>
+      <genero>Tecnologia</genero>
+      <paginas>260</paginas>
+      <precio moneda="EUR">14.00</precio>
+      <disponible>SI</disponible>
+    </libro>
+  </libros>
+
+  <socios>
+    <socio id="S1">
+      <nombre>Ana Ruiz</nombre>
+      <email>ana.ruiz@example.com</email>
+      <ciudad>Madrid</ciudad>
+      <telefono>600111111</telefono>
+    </socio>
+    <socio id="S2">
+      <nombre>Luis Perez</nombre>
+      <email>luis.perez@example.com</email>
+      <ciudad>Sevilla</ciudad>
+    </socio>
+    <socio id="S3">
+      <nombre>Marta Gil</nombre>
+      <email>marta.gil@example.com</email>
+      <ciudad>Madrid</ciudad>
+      <telefono>600333333</telefono>
+    </socio>
+  </socios>
+
+  <prestamos>
+    <prestamo id="P1">
+      <socioRef>S1</socioRef>
+      <libroRef>L2</libroRef>
+      <fechaPrestamo>2026-02-10</fechaPrestamo>
+      <estado>ABIERTO</estado>
+    </prestamo>
+    <prestamo id="P2">
+      <socioRef>S2</socioRef>
+      <libroRef>L1</libroRef>
+      <fechaPrestamo>2026-02-11</fechaPrestamo>
+      <fechaDevolucion>2026-02-15</fechaDevolucion>
+      <estado>CERRADO</estado>
+    </prestamo>
+    <prestamo id="P3">
+      <socioRef>S3</socioRef>
+      <libroRef>L3</libroRef>
+      <fechaPrestamo>2026-02-12</fechaPrestamo>
+      <estado>ABIERTO</estado>
+    </prestamo>
+  </prestamos>
+</biblioteca>

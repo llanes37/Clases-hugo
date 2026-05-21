@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Clase XML + XSD + XPath (1 DAM) - Laboratorio</title>
+  <style>
+    :root { color-scheme: light; }
+    body { font-family: system-ui, Arial, sans-serif; margin: 24px; color: #111; background: #fafafa; }
+    h1 { margin: 0 0 8px 0; }
+    .muted { color: #555; }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    @media (min-width: 1000px) { .grid { grid-template-columns: 1fr 1fr; } }
+    textarea, input { width: 100%; box-sizing: border-box; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+    textarea { min-height: 280px; padding: 12px; border-radius: 10px; border: 1px solid #ddd; background: #fff; }
+    input { padding: 10px 12px; border-radius: 10px; border: 1px solid #ddd; background: #fff; }
+    button { padding: 10px 12px; border-radius: 10px; border: 1px solid #111; background: #111; color: #fff; cursor: pointer; }
+    button.secondary { background: #fff; color: #111; border-color: #ddd; }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .card { background: #fff; border: 1px solid #e5e5e5; border-radius: 14px; padding: 14px; }
+    pre { margin: 0; padding: 12px; border-radius: 12px; background: #0b1020; color: #e8e8ff; overflow: auto; }
+    code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+    .pill { display: inline-block; padding: 2px 8px; border: 1px solid #ddd; border-radius: 999px; background: #fff; font-size: 12px; }
+    .error { color: #b00020; font-weight: 600; }
+    .ok { color: #0b6b2b; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <!-- ========================================================= -->
+  <!-- ! Clase didactica (HTML) para XML + XSD + XPath            -->
+  <!-- ========================================================= -->
+  <!-- * Este HTML incluye un mini laboratorio para practicar XPath -->
+  <!-- * Abre este archivo en el navegador y juega con las consultas. -->
+  <!-- ? Nota: el navegador evalua XPath 1.0. Eso es suficiente para 1 DAM. -->
+
+  <h1>XML + XSD + XPath (1 DAM)</h1>
+  <p class="muted">
+    Objetivo: entender datos en XML, validarlos con XSD y consultarlos con XPath.
+    <span class="pill">Nivel: 1 DAM</span>
+    <span class="pill">Tema: LMSGI (parte datos)</span>
+  </p>
+
+  <div class="grid">
+    <div class="card">
+      <h2>1) XML de ejemplo (editable)</h2>
+      <p class="muted">
+        <!-- ! Importante: XML debe ser bien formado -->
+        Si el XML no es bien formado, no se puede evaluar XPath.
+      </p>
+      <div class="row">
+        <button id="btnLoadSample" class="secondary" type="button">Cargar XML de ejemplo</button>
+        <button id="btnClearXml" class="secondary" type="button">Vaciar XML</button>
+      </div>
+      <textarea id="xmlInput" spellcheck="false"></textarea>
+      <p class="muted">
+        <!-- ? Nota: el dataset tiene libros, socios y prestamos -->
+        Pista: prueba consultas como <code>//libro</code> o <code>count(//prestamo)</code>.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>2) XPath (consulta)</h2>
+      <p class="muted">
+        <!-- * Ejemplo: //libro[titulo] -->
+        Escribe una expresion XPath y pulsa "Evaluar".
+      </p>
+      <input id="xpathInput" value="//libro/titulo" />
+      <div class="row" style="margin-top: 10px;">
+        <button id="btnEval" type="button">Evaluar XPath</button>
+        <button id="btnLoadExamples" class="secondary" type="button">Cargar ejemplos</button>
+      </div>
+
+      <div style="margin-top: 12px;">
+        <div id="status" class="muted"></div>
+      </div>
+
+      <h3 style="margin-top: 14px;">Resultado</h3>
+      <pre><code id="resultOutput"></code></pre>
+
+      <h3 style="margin-top: 14px;">Ejemplos rapidos</h3>
+      <!-- TODO Alumno: haz clic en varios ejemplos y explica que devuelven -->
+      <div id="examples" class="row"></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top: 16px;">
+    <h2>3) XSD (mini) - Que significa "validar"</h2>
+    <p class="muted">
+      <!-- ! Importante: XML valido = bien formado + cumple el XSD -->
+      XML "valido" significa: el XML esta bien formado y ademas cumple las reglas del XSD.
+    </p>
+    <p class="muted">
+      <!-- * Ejemplo: enlazar el XSD desde el XML -->
+      En este curso, el XML enlaza el esquema con <code>xsi:noNamespaceSchemaLocation</code>.
+      Asi, herramientas como VS Code pueden validar mas facil.
+    </p>
+    <pre><code>
+&lt;biblioteca version="1.0"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="biblioteca.xsd"&gt;
+  ...
+&lt;/biblioteca&gt;
+    </code></pre>
+    <p class="muted">
+      <!-- ? Nota: el navegador NO valida XSD -->
+      Nota: este HTML te sirve para XPath. La validacion XSD la haces en VS Code (o con herramientas externas).
+    </p>
+  </div>
+
+  <div class="card" style="margin-top: 16px;">
+    <h2>4) Ejercicios guiados (para clase)</h2>
+    <p class="muted">
+      <!-- TODO Alumno: intenta hacerlos sin mirar soluciones -->
+      Haz estos ejercicios con el laboratorio de XPath (arriba).
+    </p>
+    <ol>
+      <li>Selecciona todos los libros: <code>//libro</code></li>
+      <li>Selecciona solo titulos: <code>//libro/titulo</code></li>
+      <li>Filtra por genero Fantasia: <code>//libro[genero='Fantasia']</code></li>
+      <li>Filtra por paginas &gt; 200: <code>//libro[paginas &gt; 200]/titulo</code></li>
+      <li>Cuenta prestamos abiertos: <code>count(//prestamo[estado='ABIERTO'])</code></li>
+      <li>Suma precios: <code>sum(//libro/precio)</code></li>
+    </ol>
+    <p class="muted">
+      <!-- * Truco: si no sale nada, revisa el filtro -->
+      Truco: si no sale nada, no siempre es error. Puede que el filtro no coincida con los datos.
+    </p>
+  </div>
+
+  <div class="card" style="margin-top: 16px;">
+    <h2>5) Recordatorio rapido (para clase)</h2>
+    <pre><code>
+<!-- XML (bien formado) -->
+&lt;root&gt;
+  &lt;item id="A1"&gt;texto&lt;/item&gt;
+&lt;/root&gt;
+
+<!-- XPath basico -->
+//item            -> selecciona todos los item
+//item[@id='A1']  -> filtra por atributo
+count(//item)     -> cuenta nodos
+//item[text()='texto'] -> filtra por texto exacto
+    </code></pre>
+    <p class="muted">
+      <!-- * Truco: empieza simple y complica poco a poco -->
+      Truco: primero prueba <code>//libro</code>. Luego filtra con <code>[...]</code>.
+    </p>
+  </div>
+
+  <div class="card" style="margin-top: 16px;">
+    <h2>6) Errores tipicos (lo que mas se ve en 1 DAM)</h2>
+    <ul>
+      <li><strong>XML mal cerrado</strong>: falta <code>&lt;/tag&gt;</code> o hay anidacion incorrecta.</li>
+      <li><strong>Texto sin comillas</strong> en atributos: <code>id=L1</code> esta mal, debe ser <code>id="L1"</code>.</li>
+      <li><strong>XPath no devuelve nada</strong>: no siempre es error, revisa el filtro.</li>
+      <li><strong>XSD con sequence</strong>: el orden de elementos importa.</li>
+      <li><strong>Keyref</strong>: referencias como <code>S999</code> fallan si no existe ese id.</li>
+    </ul>
+  </div>
+
+  <div class="card" style="margin-top: 16px;">
+    <h2>7) Entrega (idea)</h2>
+    <p class="muted">
+      <!-- * Esto lo puedes usar como cierre de clase -->
+      Entrega minima recomendada:
+    </p>
+    <ol>
+      <li>Un XML corregido y valido (a partir de <code>biblioteca_invalida.xml</code>).</li>
+      <li>Un listado de 12 XPath (con su descripcion).</li>
+      <li>(Opcional) 2 mejoras en el XSD (restricciones o patrones).</li>
+    </ol>
+  </div>
+
+  <script>
+    // ==========================================================
+    // ! Mini laboratorio de XPath en navegador
+    // ==========================================================
+    // * Implementa: parse XML -> evaluate XPath -> render results
+    // ? Nota: esto usa DOMParser y document.evaluate (XPath 1.0)
+
+    const SAMPLE_XML = `<?xml version="1.0"?>
+<biblioteca version="1.0"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="biblioteca.xsd">
+  <libros>
+    <libro id="L1">
+      <titulo>El bosque azul</titulo>
+      <autor>Ana Ruiz</autor>
+      <anio>2018</anio>
+      <genero>Fantasia</genero>
+      <paginas>220</paginas>
+      <precio moneda="EUR">12.95</precio>
+      <disponible>SI</disponible>
+    </libro>
+    <libro id="L2">
+      <titulo>SQL para principiantes</titulo>
+      <autor>Javier Soto</autor>
+      <anio>2022</anio>
+      <genero>Tecnologia</genero>
+      <paginas>180</paginas>
+      <precio moneda="EUR">19.90</precio>
+      <disponible>NO</disponible>
+    </libro>
+    <libro id="L3">
+      <titulo>Viaje al centro</titulo>
+      <autor>Marta Gil</autor>
+      <anio>2015</anio>
+      <genero>Aventura</genero>
+      <paginas>310</paginas>
+      <precio moneda="EUR">9.50</precio>
+      <disponible>SI</disponible>
+    </libro>
+    <libro id="L4">
+      <titulo>Aprender tablas</titulo>
+      <autor>Diego Leon</autor>
+      <anio>2020</anio>
+      <genero>Tecnologia</genero>
+      <paginas>260</paginas>
+      <precio moneda="EUR">14.00</precio>
+      <disponible>SI</disponible>
+    </libro>
+  </libros>
+
+  <socios>
+    <socio id="S1">
+      <nombre>Ana Ruiz</nombre>
+      <email>ana.ruiz@example.com</email>
+      <ciudad>Madrid</ciudad>
+      <telefono>600111111</telefono>
+    </socio>
+    <socio id="S2">
+      <nombre>Luis Perez</nombre>
+      <email>luis.perez@example.com</email>
+      <ciudad>Sevilla</ciudad>
+    </socio>
+    <socio id="S3">
+      <nombre>Marta Gil</nombre>
+      <email>marta.gil@example.com</email>
+      <ciudad>Madrid</ciudad>
+      <telefono>600333333</telefono>
+    </socio>
+  </socios>
+
+  <prestamos>
+    <prestamo id="P1">
+      <socioRef>S1</socioRef>
+      <libroRef>L2</libroRef>
+      <fechaPrestamo>2026-02-10</fechaPrestamo>
+      <estado>ABIERTO</estado>
+    </prestamo>
+    <prestamo id="P2">
+      <socioRef>S2</socioRef>
+      <libroRef>L1</libroRef>
+      <fechaPrestamo>2026-02-11</fechaPrestamo>
+      <fechaDevolucion>2026-02-15</fechaDevolucion>
+      <estado>CERRADO</estado>
+    </prestamo>
+    <prestamo id="P3">
+      <socioRef>S3</socioRef>
+      <libroRef>L3</libroRef>
+      <fechaPrestamo>2026-02-12</fechaPrestamo>
+      <estado>ABIERTO</estado>
+    </prestamo>
+  </prestamos>
+</biblioteca>`;
+
+    const EXAMPLES = [
+      { label: "//libro", xpath: "//libro" },
+      { label: "//libro/titulo", xpath: "//libro/titulo" },
+      { label: "count(//libro)", xpath: "count(//libro)" },
+      { label: "//libro[genero='Fantasia']/titulo", xpath: "//libro[genero='Fantasia']/titulo" },
+      { label: "//libro[paginas > 200]/titulo", xpath: "//libro[paginas > 200]/titulo" },
+      { label: "//socio[ciudad='Madrid']/nombre", xpath: "//socio[ciudad='Madrid']/nombre" },
+      { label: "//prestamo[estado='ABIERTO']", xpath: "//prestamo[estado='ABIERTO']" },
+      { label: "count(//prestamo[estado='ABIERTO'])", xpath: "count(//prestamo[estado='ABIERTO'])" },
+      { label: "sum(//libro/precio)", xpath: "sum(//libro/precio)" },
+      { label: "//libro[contains(titulo,'SQL')]/titulo", xpath: "//libro[contains(titulo,'SQL')]/titulo" },
+    ];
+
+    const xmlInput = document.getElementById("xmlInput");
+    const xpathInput = document.getElementById("xpathInput");
+    const resultOutput = document.getElementById("resultOutput");
+    const status = document.getElementById("status");
+    const examples = document.getElementById("examples");
+
+    function setStatusOk(message) {
+      status.innerHTML = `<span class="ok">${escapeHtml(message)}</span>`;
+    }
+
+    function setStatusError(message) {
+      status.innerHTML = `<span class="error">${escapeHtml(message)}</span>`;
+    }
+
+    function escapeHtml(s) {
+      return String(s)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;");
+    }
+
+    function parseXml(xmlString) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(xmlString, "application/xml");
+
+      // ! Importante: DOMParser mete <parsererror> si el XML esta mal
+      const err = doc.getElementsByTagName("parsererror")[0];
+      if (err) {
+        throw new Error("XML no bien formado: revisa etiquetas y comillas.");
+      }
+      return doc;
+    }
+
+    function evaluateXPath(xmlDoc, xpath) {
+      // * ANY_TYPE permite leer resultado segun tipo: nodos / numero / string / boolean
+      return xmlDoc.evaluate(xpath, xmlDoc, null, XPathResult.ANY_TYPE, null);
+    }
+
+    function renderXPathResult(result) {
+      switch (result.resultType) {
+        case XPathResult.NUMBER_TYPE:
+          return String(result.numberValue);
+        case XPathResult.STRING_TYPE:
+          return result.stringValue;
+        case XPathResult.BOOLEAN_TYPE:
+          return String(result.booleanValue);
+        default: {
+          // * Iterator de nodos (lo mas comun en selectores)
+          const serializer = new XMLSerializer();
+          const lines = [];
+          let node = result.iterateNext();
+          while (node) {
+            lines.push(serializer.serializeToString(node));
+            node = result.iterateNext();
+          }
+          if (lines.length === 0) return "(0 nodos)";
+          return lines.join("\n");
+        }
+      }
+    }
+
+    function onEval() {
+      try {
+        const xmlDoc = parseXml(xmlInput.value.trim());
+        const xp = xpathInput.value.trim();
+        if (!xp) {
+          setStatusError("Escribe un XPath.");
+          resultOutput.textContent = "";
+          return;
+        }
+
+        const result = evaluateXPath(xmlDoc, xp);
+        const rendered = renderXPathResult(result);
+        setStatusOk("OK: XPath evaluado.");
+        resultOutput.textContent = rendered;
+      } catch (e) {
+        setStatusError(e.message || String(e));
+        resultOutput.textContent = "";
+      }
+    }
+
+    function loadExamples() {
+      examples.innerHTML = "";
+      for (const ex of EXAMPLES) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "secondary";
+        btn.textContent = ex.label;
+        btn.addEventListener("click", () => {
+          xpathInput.value = ex.xpath;
+          onEval();
+        });
+        examples.appendChild(btn);
+      }
+      setStatusOk("Ejemplos cargados. Pulsa uno.");
+    }
+
+    document.getElementById("btnLoadSample").addEventListener("click", () => {
+      xmlInput.value = SAMPLE_XML;
+      setStatusOk("XML de ejemplo cargado.");
+    });
+
+    document.getElementById("btnClearXml").addEventListener("click", () => {
+      xmlInput.value = "";
+      setStatusOk("XML vaciado.");
+      resultOutput.textContent = "";
+    });
+
+    document.getElementById("btnEval").addEventListener("click", onEval);
+    document.getElementById("btnLoadExamples").addEventListener("click", loadExamples);
+
+    // * Arranque: carga XML y ejemplos para que sea usable al abrir
+    xmlInput.value = SAMPLE_XML;
+    loadExamples();
+    onEval();
+  </script>
+</body>
+</html>
